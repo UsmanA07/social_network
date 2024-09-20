@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <h1>Посты</h1>
+  {% for post in posts %}
+    <a href="{% url 'prof:pk_profile' post.user.pk %}">{{ post.user.profile.pk }}</a>
+    <p><a href="{% url 'post:post_detail' post.pk %}">{{ post.pk }}</a></p>
+    <hr>
+  {% endfor %}
+{% endblock %}

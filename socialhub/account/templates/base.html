@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+<!--  <link href="{% static "css/base.css" %}" rel="stylesheet">-->
+</head>
+<body>
+  <div id="header">
+    <span class="logo">SocialHub</span>
+<!--    {% if request.user.is_authenticated %}-->
+<!--&lt;!&ndash;      <ul class="menu">&ndash;&gt;-->
+<!--&lt;!&ndash;        <li {% if section == "dashboard" %}class="selected"{% endif %}>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a href="{% url "dashboard" %}">My dashboard</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        </li>&ndash;&gt;-->
+<!--&lt;!&ndash;        <li {% if section == "images" %}class="selected"{% endif %}>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a href="#">Images</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        </li>&ndash;&gt;-->
+<!--&lt;!&ndash;        <li {% if section == "people" %}class="selected"{% endif %}>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a href="#">People</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        </li>&ndash;&gt;-->
+<!--&lt;!&ndash;      </ul>&ndash;&gt;-->
+<!--    {% endif %}-->
+    <span class="user">
+      {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit">Log Out</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Log-in</a>
+      {% endif %}
+    </span>
+  </div>
+  <hr>
+  <div id="content">
+    {% block content %}
+    {% endblock %}
+  </div>
+</body>
+</html>

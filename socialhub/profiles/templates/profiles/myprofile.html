@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+  <h1>My Profile</h1>
+
+  {{ profile.last_name }}
+  {{ profile.first_name }}
+  <p>{{ profile.user }}</p>
+
+  <p>{{ profile.bio }}</p>
+  <a href="{% url 'prof:update_profile' profile.pk %}">Update Profile</a>
+  <a href="{% url 'prof:pk_profile' profile.pk %}">Update Profile</a>
+  <a href="{% url 'post:post_create' %}">Create Post</a>
+
+  <br>
+  <hr>
+{% for post in posts %}
+    {{ post.title }}
+  {% endfor %}
+{% endblock %}
