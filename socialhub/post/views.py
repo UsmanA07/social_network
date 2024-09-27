@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Post
+from .models import Likes
 from profiles.models import Profile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import PostForm, PostFormCreate
+from .forms import PostForm, PostFormCreate, PostLikeForm
 from django.http import HttpResponseRedirect, HttpResponse
 
 
@@ -34,8 +35,10 @@ def post_update(request, pk):
 
 @login_required
 def post_detail(request, pk):
+    user = request.user
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'post/detail.html', {'post': post})
+
+    return render(request, 'post/detail.html', {'post': post, 'user': user, 'liked': liked})
 
 
 @login_required

@@ -14,4 +14,12 @@
     <p><a href="{% url 'post:post_delete' post.pk %}">Delete Post</a></p>
   {% endif %}
 
+  <hr>
+
+
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit">Save</button>
+    </form>
+
 {% endblock %}
