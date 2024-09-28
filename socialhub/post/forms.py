@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Likes
+from .models import Post
 
 
 class PostForm(forms.ModelForm):
@@ -13,8 +13,9 @@ class PostFormCreate(forms.ModelForm):
         model = Post
         fields = ['id', 'title', 'text']
 
+    # def form_valid(self, form):
+    #     form.instance.user = self.request.user
+    #     return super().form_valid(form)
 
-class PostLikeForm(forms.Form):
-    class Meta:
-        model = Likes
-        fields = ['like', 'post']
+
+
