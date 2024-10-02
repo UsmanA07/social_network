@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from .forms import PostForm, PostFormCreate
 from django.http import HttpResponseRedirect, HttpResponse
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 
 @login_required
 def post_list(request):
@@ -65,3 +68,24 @@ def post_create(request):
 
 def redirect_to_post(request):
     return HttpResponseRedirect('/post/')
+
+
+@login_required
+@require_POST
+def post_like(request):
+    post_id = request.POST.get('id')
+    action = request.POST.get('action')
+    if post_id and action:
+        try:
+            post = Post.objects.get(id=post_id)
+
+            if request.user not in post.like.all():
+                post.like.add(request.user)
+                post.like.count()
+            else:
+                post.like.remove(request.user)
+                post.like.count()
+            return JsonResponse({'status': 'ok'})
+        except Post.DoesNotExist:
+            pass
+        return JsonResponse({'status': 'error'})

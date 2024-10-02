@@ -2,6 +2,7 @@
 
 {% block title %}Post{% endblock %}
 
+
 {% block content %}
   <h1>My Post</h1>
 
@@ -15,11 +16,45 @@
   {% endif %}
 
   <hr>
+    {% with users_like=post.like.all %}
+
+    <a href="#" data-id="{{ post.id }}" data-action="{% if request.user in like %}un{% endif %}like" class="like button">
+        {% if request.user not in users_like %}
+          Like
+        {% else %}
+          Unlike
+        {% endif %}
+
+    </a>
+    {{ post.like.count }}
+  {% endwith %}
+{% endblock %}
 
 
-    <form method="POST">
-      {% csrf_token %}
-      <button type="submit">Save</button>
-    </form>
+{% block domready %}
+  const url = '{% url "post:like" %}';
+  var options = {
+    method: 'POST',
+    headers: {'X-CSRFToken': csrftoken},
+    mode: 'same-origin'
+  }
 
+  document.querySelector('a.like')
+          .addEventListener('click', function(e){
+    e.preventDefault();
+    var likeButton = this;
+
+    var formData = new FormData();
+    formData.append('id', likeButton.dataset.id);
+    formData.append('action', likeButton.dataset.action);
+    options['body'] = formData;
+
+    fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      if (data['status'] === 'ok')
+      {
+      }
+    })
+  });
 {% endblock %}
