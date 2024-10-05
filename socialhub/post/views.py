@@ -1,11 +1,10 @@
+import redis
 from django.shortcuts import render, get_object_or_404
 from .models import Post
-from profiles.models import Profile
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from .forms import PostForm, PostFormCreate
 from django.http import HttpResponseRedirect, HttpResponse
-
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
@@ -35,12 +34,17 @@ def post_update(request, pk):
     return render(request, 'profiles/update.html', {"form": form})
 
 
+r = redis.Redis(host=settings.REDIS_HOST,
+                port=settings.REDIS_PORT,
+                db=settings.REDIS_DB)
+
+
 @login_required
 def post_detail(request, pk):
     user = request.user
     post = get_object_or_404(Post, pk=pk)
-
-    return render(request, 'post/detail.html', {'post': post, 'user': user})
+    total_views = r.incr(f'post:{post.id}:views')
+    return render(request, 'post/detail.html', {'post': post, 'user': user, 'total_views': total_views})
 
 
 @login_required
@@ -78,13 +82,11 @@ def post_like(request):
     if post_id and action:
         try:
             post = Post.objects.get(id=post_id)
-
             if request.user not in post.like.all():
                 post.like.add(request.user)
-                post.like.count()
             else:
                 post.like.remove(request.user)
-                post.like.count()
+
             return JsonResponse({'status': 'ok'})
         except Post.DoesNotExist:
             pass
