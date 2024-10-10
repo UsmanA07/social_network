@@ -29,6 +29,14 @@
     {{ n }}
     <p>{{ total_views }} views</p>
   {% endwith %}
+  <hr>
+  <p><a href="{% url 'post:comment_create' post.pk %}">Create comment</a></p>
+  {% for comment in comments %}
+    <p>{{ comment.user }}</p>
+    <p>{{ comment.text }}</p>
+    <br>
+    <hr>
+  {% endfor %}
 {% endblock %}
 
 

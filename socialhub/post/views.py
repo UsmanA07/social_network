@@ -1,8 +1,8 @@
 import redis
-from django.shortcuts import render, get_object_or_404
-from .models import Post
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Post, Comment
 from django.contrib.auth.decorators import login_required
-from .forms import PostForm, PostFormCreate
+from .forms import PostForm, PostFormCreate, CommentFormCreate
 from django.http import HttpResponseRedirect, HttpResponse
 from django.conf import settings
 from django.http import JsonResponse
@@ -44,7 +44,11 @@ def post_detail(request, pk):
     user = request.user
     post = get_object_or_404(Post, pk=pk)
     total_views = r.incr(f'post:{post.id}:views')
-    return render(request, 'post/detail.html', {'post': post, 'user': user, 'total_views': total_views})
+
+    post = get_object_or_404(Post, pk=pk)
+    comments = Comment.objects.filter(post=post)
+    return render(request, 'post/detail.html',
+                  {'post': post, 'user': user, 'total_views': total_views, 'comments': comments})
 
 
 @login_required
@@ -55,7 +59,6 @@ def post_delete(request, pk):
     else:
         return HttpResponse('Вы не автор этого поста!!')
     return HttpResponseRedirect('/post/')
-    # return render(request, 'post/delete.html', {'post': post})
 
 
 @login_required
@@ -91,3 +94,21 @@ def post_like(request):
         except Post.DoesNotExist:
             pass
         return JsonResponse({'status': 'error'})
+
+
+def comment_create(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = CommentFormCreate(request.POST)
+        if form.is_valid():
+            form.instance.user = request.user
+            form.instance.post = post
+            form.save()
+            return redirect('post:post_detail', post.pk)
+    form = CommentFormCreate()
+    return render(request, 'post/comment_create.html', {'form': form})
+
+
+def comment_like(request):
+    pass
+    # TODO создать отдельную html-страницу и п уже перенести его в основной(include)

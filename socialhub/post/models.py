@@ -19,3 +19,17 @@ class Post(models.Model):
         ]
 
 
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comment')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    text = models.TextField(blank=True)
+    like = models.ManyToManyField(User, related_name='like_comment', blank=True)
+    published = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.post)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['-published'])
+        ]

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post
+from .models import Post, Comment
 
 
 class PostForm(forms.ModelForm):
@@ -13,9 +13,8 @@ class PostFormCreate(forms.ModelForm):
         model = Post
         fields = ['id', 'title', 'text']
 
-    # def form_valid(self, form):
-    #     form.instance.user = self.request.user
-    #     return super().form_valid(form)
 
-
-
+class CommentFormCreate(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['id', 'text']
